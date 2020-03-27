@@ -1,0 +1,15 @@
+- hosts: localhost
+  vars_prompt:
+
+    - name: oldHostname
+      prompt: "Please specify old hostname?"
+      private: no
+    - name: newHostname
+      prompt: "Please specify new hostname to replace"
+      private: no
+  tasks:
+  - name: Replace old hostname to new hostname
+    replace:
+     path: /usr/share/moogsoft/config/servlets.conf
+     regexp: '{{ oldHostname }}'
+     replace: "{{ newHostname }}"

@@ -1,0 +1,16 @@
+- hosts: localhost
+  vars_prompt:
+
+    - name: clientname
+      prompt: "What is the client name?"
+      private: no
+
+  tasks:
+    - name: commit changes to git
+      shell: |
+        git add .
+        git commit -m "Config snapshot taken $(date +"%Y-%m-%d %H:%M:%S")"
+        # Needed as git commit will fail if there are no changed files
+        exit 0
+      args:
+        chdir: "{{ clientname }}"

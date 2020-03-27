@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# MySQL basedir passed as argument
+# mysqladmin must be under $BASEDIR/bin
+# sock file must be under $BASEDIR/mysqld.sock
+BASEDIR=/usr
+MYSQLUSER=root
+MYSQLPASS=root
+SOCKET=/var/run/mysqld/mysqld.sock
+# initial sleep to give time to MySQL to recover InnoDB
+/bin/sleep 60
+
+while [ 1 ]; do
+        sleep 60
+        STATUS=`$BASEDIR/bin/mysqladmin -S $SOCKET -u$MYSQLUSER -p$MYSQLPASS ping|grep -c alive`
+        if [ $STATUS -ne 1 ]; then
+                # uname -n | /bin/mail -s "MySQL database down, rechecking in 5 seconds" $EMAIL
+                sleep 5
+                STATUS=`$BASEDIR/bin/mysqladmin -S $SOCKET -u$MYSQLUSER -p$MYSQLPASS ping|grep -c alive`
+                if [ $STATUS -ne 1 ]; then
+                        # uname -n | /bin/mail -s " MySQL database down, forcing failover" $EMAIL
+                        /etc/init.d/heartbeat stop
+                        exit
+                fi
+        fi
+done

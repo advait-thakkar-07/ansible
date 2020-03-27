@@ -1,0 +1,27 @@
+- hosts: localhost
+  vars_prompt:
+
+    - name: client
+      prompt: "Which client?"
+      private: no
+
+  tasks:
+  - name: copy file from contrib
+    copy:
+      src: "{{ item }}"
+      dest: /usr/share/moogsoft/contrib/
+    with_fileglob:
+      - /data/{{ client }}/contrib/*
+  - name: copy file from config
+    copy:
+      src: "{{ item }}"
+      dest: /usr/share/moogsoft/config/
+    with_fileglob:
+      - /data/{{ client }}/config/*
+  - name: copy file from bots
+    copy:
+      src: "{{ item }}"
+      dest: /usr/share/moogsoft/bots/
+    with_fileglob:
+      - /data/{{ client }}/bots/*
+
